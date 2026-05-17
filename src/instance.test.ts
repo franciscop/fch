@@ -24,7 +24,7 @@ describe("fch.create()", () => {
     expect(result).toEqual("response from api");
     expect(fetchCalls.length).toEqual(1);
     expect(fetchCalls[0][0]).toEqual("https://api.example.com/users");
-    expect(fetchCalls[0][1].method).toEqual("get");
+    expect(fetchCalls[0][1].method).toEqual("GET");
   });
 
   it("creates instance with custom baseURL", async () => {
@@ -344,12 +344,12 @@ describe("fch.create()", () => {
     expect(del).toEqual("delete");
 
     expect(fetchCalls.length).toEqual(6);
-    expect(fetchCalls[0][1].method).toEqual("get");
-    expect(fetchCalls[1][1].method).toEqual("head");
-    expect(fetchCalls[2][1].method).toEqual("post");
-    expect(fetchCalls[3][1].method).toEqual("put");
-    expect(fetchCalls[4][1].method).toEqual("patch");
-    expect(fetchCalls[5][1].method).toEqual("delete");
+    expect(fetchCalls[0][1].method).toEqual("GET");
+    expect(fetchCalls[1][1].method).toEqual("HEAD");
+    expect(fetchCalls[2][1].method).toEqual("POST");
+    expect(fetchCalls[3][1].method).toEqual("PUT");
+    expect(fetchCalls[4][1].method).toEqual("PATCH");
+    expect(fetchCalls[5][1].method).toEqual("DELETE");
   });
 
   it("creates instance with baseUrl containing path", async () => {

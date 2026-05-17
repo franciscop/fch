@@ -213,7 +213,7 @@ function create(defaults: Options = {}): FchInstance {
       { ...fch.query, ...options.query },
       request.baseUrl ?? request.baseURL,
     );
-    request.method = (request.method || "get").toLowerCase();
+    request.method = (request.method || "GET").toUpperCase();
     request.headers = createHeaders({ ...fch.headers, ...options.headers });
 
     if (
@@ -239,7 +239,10 @@ function create(defaults: Options = {}): FchInstance {
         const req: Promise<FchRequest> = before
           ? Promise.resolve(before(request as FchRequest))
           : Promise.resolve(request as FchRequest);
-        responseProm = req.then((r) => fetch(r.url, r));
+        responseProm = req.then((r) => {
+          r.method = r.method.toUpperCase();
+          return fetch(r.url, r);
+        });
       }
       return responseProm;
     };
@@ -269,7 +272,7 @@ function create(defaults: Options = {}): FchInstance {
     const getDefault = (): Promise<T> => {
       if (defaultProm) return defaultProm;
 
-      if (!cache || request.method !== "get") {
+      if (!cache || request.method !== "GET") {
         defaultProm = getResponse().then(process).catch(error);
         return defaultProm;
       }

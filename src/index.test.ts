@@ -47,7 +47,7 @@ describe("fetch()", () => {
     expect(body).toEqual("hello");
     expect(fetchCalls.length).toEqual(1);
     expect(fetchCalls[0][0]).toEqual("/");
-    expect(fetchCalls[0][1].method).toEqual("get");
+    expect(fetchCalls[0][1].method).toEqual("GET");
     expect(fetchCalls[0][1].headers).toEqual({});
   });
 
@@ -58,7 +58,7 @@ describe("fetch()", () => {
     expect(body).toEqual("hello");
     expect(fetchCalls.length).toEqual(1);
     expect(fetchCalls[0][0]).toEqual("/");
-    expect(fetchCalls[0][1].method).toEqual("get");
+    expect(fetchCalls[0][1].method).toEqual("GET");
     expect(fetchCalls[0][1].headers).toEqual({});
   });
 
@@ -85,12 +85,12 @@ describe("fetch()", () => {
     expect(del).toEqual("delete");
 
     expect(fetchCalls.length).toEqual(6);
-    expect(fetchCalls[0][1].method).toEqual("get");
-    expect(fetchCalls[1][1].method).toEqual("head");
-    expect(fetchCalls[2][1].method).toEqual("post");
-    expect(fetchCalls[3][1].method).toEqual("put");
-    expect(fetchCalls[4][1].method).toEqual("patch");
-    expect(fetchCalls[5][1].method).toEqual("delete");
+    expect(fetchCalls[0][1].method).toEqual("GET");
+    expect(fetchCalls[1][1].method).toEqual("HEAD");
+    expect(fetchCalls[2][1].method).toEqual("POST");
+    expect(fetchCalls[3][1].method).toEqual("PUT");
+    expect(fetchCalls[4][1].method).toEqual("PATCH");
+    expect(fetchCalls[5][1].method).toEqual("DELETE");
   });
 
   describe("streaming", () => {
@@ -214,7 +214,7 @@ describe("fetch()", () => {
     const [url, opts] = fetchCalls[0];
     expect(url).toEqual("/");
     expect(opts).toMatchObject({
-      method: "post",
+      method: "POST",
       body: JSON.stringify({ a: "b" }),
       headers: { "content-type": "xxx" },
     });

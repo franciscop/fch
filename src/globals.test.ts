@@ -82,7 +82,7 @@ describe("baseUrl and baseURL configuration", () => {
 		const body = await fch.get("/hello");
 		expect(body).toBe("hi");
 		expect(fetchCalls[0][0]).toBe("https://google.com/hello");
-		expect(fetchCalls[0][1].method).toEqual("get");
+		expect(fetchCalls[0][1].method).toEqual("GET");
 	});
 
 	it("can use the baseURL", async () => {
@@ -91,7 +91,7 @@ describe("baseUrl and baseURL configuration", () => {
 		const body = await fch.get("/hello");
 		expect(body).toBe("hi");
 		expect(fetchCalls[0][0]).toBe("https://google.com/hello");
-		expect(fetchCalls[0][1].method).toEqual("get");
+		expect(fetchCalls[0][1].method).toEqual("GET");
 	});
 
 	it("can use the baseURL with a path", async () => {
@@ -100,7 +100,7 @@ describe("baseUrl and baseURL configuration", () => {
 		const body = await fch.get("/hello");
 		expect(body).toBe("hi");
 		expect(fetchCalls[0][0]).toBe("https://google.com/hi/hello");
-		expect(fetchCalls[0][1].method).toEqual("get");
+		expect(fetchCalls[0][1].method).toEqual("GET");
 	});
 
 	it("can use the baseUrl as an option", async () => {
@@ -109,7 +109,7 @@ describe("baseUrl and baseURL configuration", () => {
 		const body = await fch.get("/hello", { baseUrl });
 		expect(body).toBe("hi");
 		expect(fetchCalls[0][0]).toBe("https://google.com/hello");
-		expect(fetchCalls[0][1].method).toEqual("get");
+		expect(fetchCalls[0][1].method).toEqual("GET");
 	});
 
 	it("can use the baseURL", async () => {
@@ -118,7 +118,7 @@ describe("baseUrl and baseURL configuration", () => {
 		const body = await fch.get("/hello", { baseURL });
 		expect(body).toBe("hi");
 		expect(fetchCalls[0][0]).toBe("https://google.com/hello");
-		expect(fetchCalls[0][1].method).toEqual("get");
+		expect(fetchCalls[0][1].method).toEqual("GET");
 	});
 });
 
@@ -228,7 +228,7 @@ describe("interceptors", () => {
 		expect(body).toEqual("hello");
 		expect(fetchCalls.length).toEqual(1);
 		expect(fetchCalls[0][0]).toEqual("/hello");
-		expect(fetchCalls[0][1].method).toEqual("put");
+		expect(fetchCalls[0][1].method).toEqual("PUT");
 		expect(fetchCalls[0][1].headers).toEqual({});
 	});
 
@@ -244,7 +244,7 @@ describe("interceptors", () => {
 		expect(data).toEqual("hello");
 		expect(fetchCalls.length).toEqual(1);
 		expect(fetchCalls[0][0]).toEqual("/hello");
-		expect(fetchCalls[0][1].method).toEqual("put");
+		expect(fetchCalls[0][1].method).toEqual("PUT");
 		expect(fetchCalls[0][1].headers).toEqual({});
 
 		delete fch.before;
@@ -267,7 +267,7 @@ describe("interceptors", () => {
 		expect(res.headers.hello).toEqual("world");
 		expect(fetchCalls.length).toEqual(1);
 		expect(fetchCalls[0][0]).toEqual("/");
-		expect(fetchCalls[0][1].method).toEqual("get");
+		expect(fetchCalls[0][1].method).toEqual("GET");
 		expect(fetchCalls[0][1].headers).toEqual({});
 	});
 
@@ -287,7 +287,7 @@ describe("interceptors", () => {
 		expect(res.headers.hello).toEqual("world");
 		expect(fetchCalls.length).toEqual(1);
 		expect(fetchCalls[0][0]).toEqual("/");
-		expect(fetchCalls[0][1].method).toEqual("get");
+		expect(fetchCalls[0][1].method).toEqual("GET");
 		expect(fetchCalls[0][1].headers).toEqual({});
 	});
 

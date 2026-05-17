@@ -47,7 +47,7 @@ describe("README: Main examples", () => {
     mockFetchOnce(JSON.stringify({ type: "psychic" }), jsonHeaders);
     await api.patch("/pokemon/150", { type: "psychic" });
     expect(fetchCalls[0][0]).toBe("https://pokeapi.co/pokemon/150");
-    expect(fetchCalls[0][1]?.method).toBe("patch");
+    expect(fetchCalls[0][1]?.method).toBe("PATCH");
   });
 
   it("create instance with options example works", async () => {
