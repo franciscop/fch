@@ -1,4 +1,5 @@
 // Type definitions
+export
 type Store = {
   get: (key: string) => Promise<unknown>;
   set: (key: string, value: any, options?: any) => Promise<unknown>;
@@ -8,7 +9,9 @@ type Store = {
 };
 
 type Headers = { [name: string]: string };
+export
 type Query = { [name: string]: string };
+export
 type Methods =
   | "get"
   | "head"
@@ -35,8 +38,10 @@ type Body =
   | SubmitEvent
   | ReadableStream;
 
+export
 type FchError = Error & { response?: Response };
 
+export
 type FchRequest = Omit<RequestInit, "body" | "headers" | "method"> & {
   url: string;
   method: string;
@@ -45,6 +50,7 @@ type FchRequest = Omit<RequestInit, "body" | "headers" | "method"> & {
   duplex?: "half";
 };
 
+export
 type FchResponse = {
   status: number;
   statusText: string;
@@ -52,6 +58,7 @@ type FchResponse = {
   body: unknown;
 };
 
+export
 type FchResult<T = unknown> = {
   then<R1 = T, R2 = never>(
     onfulfilled?: ((value: T) => R1 | PromiseLike<R1>) | null,
@@ -73,6 +80,7 @@ type FchResult<T = unknown> = {
   response(): Promise<FchResponse>;
 };
 
+export
 type Options = Omit<RequestInit, "body" | "cache" | "headers" | "method"> & {
   url?: string;
   method?: Methods;
@@ -89,7 +97,7 @@ type Options = Omit<RequestInit, "body" | "cache" | "headers" | "method"> & {
   error?: (error: FchError) => any;
 };
 
-interface FchInstance {
+export interface FchInstance {
   <T = any>(url?: string, options?: Options): FchResult<T>;
   create: (options?: Options) => FchInstance;
   get: <T = any>(url: string, options?: Options) => FchResult<T>;

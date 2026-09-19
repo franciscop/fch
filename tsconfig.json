@@ -12,6 +12,7 @@
     "noEmit": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
+    "types": ["bun", "node"],
   },
   "include": ["src/"],
 }
