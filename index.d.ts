@@ -16,7 +16,7 @@ export type Query = {
 export type Methods = "get" | "head" | "post" | "patch" | "put" | "delete" | "GET" | "HEAD" | "POST" | "PATCH" | "PUT" | "DELETE";
 type Body$1 = string | unknown[] | {
 	[key: string]: unknown;
-} | FormData | HTMLFormElement | SubmitEvent | ReadableStream;
+} | FormData | URLSearchParams | Blob | ArrayBuffer | ArrayBufferView | HTMLFormElement | SubmitEvent | ReadableStream;
 export type FchError = Error & {
 	response?: Response;
 };
@@ -24,7 +24,8 @@ export type FchRequest = Omit<RequestInit, "body" | "headers" | "method"> & {
 	url: string;
 	method: string;
 	headers: Headers$1;
-	body?: string | FormData | ReadableStream | null;
+	body?: BodyInit | null;
+	duplex?: "half";
 };
 export type FchResponse = {
 	status: number;
@@ -57,6 +58,7 @@ export type Options = Omit<RequestInit, "body" | "cache" | "headers" | "method">
 	body?: Body$1;
 	cache?: Store | null;
 	output?: string;
+	duplex?: "half";
 	before?: (req: FchRequest) => FchRequest | Promise<FchRequest>;
 	after?: (res: FchResponse) => FchResponse | Promise<FchResponse>;
 	error?: (error: FchError) => any;

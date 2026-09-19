@@ -177,7 +177,7 @@ api.get("/hello");
 
 > These docs refer to the REQUEST body, for the RESPONSE body see the [**Output docs**](#output).
 
-The `body` can be a string, a plain object|array, a FormData instance, a ReadableStream, a SubmitEvent or a HTMLFormElement. If it's a plain array or object, it'll be stringified and the header `application/json` will be added:
+The `body` can be a string, a plain object|array, a FormData instance, a URLSearchParams instance, a Blob or File, an ArrayBuffer or typed array, a ReadableStream, a SubmitEvent or a HTMLFormElement. If it's a plain array or object, it'll be stringified and the header `application/json` will be added. Everything else is handed to `fetch()` as-is, so binary data keeps its bytes and a Blob keeps its own content type. Streams get `duplex: "half"` set for you, which Node requires:
 
 ```js
 import fch from "fch";
@@ -187,6 +187,13 @@ await fch.post("/houses", "plain text");
 
 // Will JSON.stringify it internally and add the JSON headers
 await api.post("/houses", { id: 1, name: "Cute Cottage" });
+
+// Binary bodies are sent untouched
+await api.put("/houses/1/photo", new Blob([bytes], { type: "image/png" }));
+await api.put("/houses/1/photo", new Uint8Array([0x89, 0x50, 0x4e, 0x47]));
+
+// Form-encoded bodies too
+await api.post("/houses", new URLSearchParams({ name: "Cute Cottage" }));
 
 // Send it as FormData
 form.onsubmit = (e) => api.post("/houses", new FormData(e.target));
@@ -265,7 +272,7 @@ When to use each?
 
 ### Output
 
-The default output manipulation is to expect either plain `TEXT` as `plain/text` or `JSON` as `application/json` from the `Content-Type`. If your API works with these (the vast majority of APIs do) then you should be fine out of the box!
+The default output manipulation is to expect either plain `TEXT` as `plain/text` or `JSON` as `application/json` from the `Content-Type`. If your API works with these (the vast majority of APIs do) then you should be fine out of the box! A JSON response with an empty body, like a `204` or the reply to a `HEAD`, resolves to `null`.
 
 ```js
 const cats = await api.get("/cats");
@@ -416,7 +423,7 @@ type FchRequest = {
   url: string;
   method: string;
   headers: { [name: string]: string };
-  body?: string | FormData | ReadableStream | null;
+  body?: BodyInit | null;
   credentials?: RequestCredentials;
   signal?: AbortSignal;
 };

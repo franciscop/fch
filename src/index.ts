@@ -27,6 +27,10 @@ type Body =
   | unknown[]
   | { [key: string]: unknown }
   | FormData
+  | URLSearchParams
+  | Blob
+  | ArrayBuffer
+  | ArrayBufferView
   | HTMLFormElement
   | SubmitEvent
   | ReadableStream;
@@ -37,7 +41,8 @@ type FchRequest = Omit<RequestInit, "body" | "headers" | "method"> & {
   url: string;
   method: string;
   headers: Headers;
-  body?: string | FormData | ReadableStream | null;
+  body?: BodyInit | null;
+  duplex?: "half";
 };
 
 type FchResponse = {
@@ -78,6 +83,7 @@ type Options = Omit<RequestInit, "body" | "cache" | "headers" | "method"> & {
   body?: Body;
   cache?: Store | null;
   output?: string;
+  duplex?: "half";
   before?: (req: FchRequest) => FchRequest | Promise<FchRequest>;
   after?: (res: FchResponse) => FchResponse | Promise<FchResponse>;
   error?: (error: FchError) => any;
@@ -107,21 +113,37 @@ interface FchInstance {
   error?: (error: FchError) => any;
 }
 
+// Anything fetch() can serialize natively is passed straight through
+const isNativeBody = (body: object): boolean => {
+  if (body instanceof FormData) return true;
+  if (body instanceof URLSearchParams) return true;
+  if (body instanceof Blob) return true;
+  if (body instanceof ArrayBuffer || ArrayBuffer.isView(body)) return true;
+  if (body instanceof ReadableStream) return true;
+  // Node streams
+  return typeof (body as Record<string, unknown>)["pipe"] === "function";
+};
+
+const isStreamBody = (body: unknown): boolean =>
+  !!body &&
+  typeof body === "object" &&
+  (body instanceof ReadableStream ||
+    typeof (body as Record<string, unknown>)["pipe"] === "function");
+
 const hasObjectBody = (body: Body | null | undefined): boolean => {
   if (!body) return false;
-  if (body instanceof FormData) return false;
-  if (typeof (body as Record<string, unknown>)["pipe"] === "function")
-    return false;
-  if (body instanceof ReadableStream) return false;
-  return typeof body === "object" || Array.isArray(body);
+  if (typeof body !== "object") return false;
+  return !isNativeBody(body);
 };
 
 const noUndefined = <T extends Record<string, unknown>>(obj: T): Partial<T> => {
-  if (typeof obj !== "object") return obj;
+  if (typeof obj !== "object" || obj === null) return obj;
+  if (Array.isArray(obj)) return obj;
+  const copy: Partial<T> = {};
   for (const key in obj) {
-    if (obj[key] === undefined) delete obj[key];
+    if (obj[key] !== undefined) copy[key] = obj[key];
   }
-  return obj;
+  return copy;
 };
 
 class ResponseError extends Error {
@@ -136,7 +158,11 @@ class ResponseError extends Error {
 }
 
 const createUrl = (url: string, query: Query, base: string | null): string => {
-  let [path, urlQuery = ""] = url.split("?");
+  const hashIndex = url.indexOf("#");
+  if (hashIndex !== -1) url = url.slice(0, hashIndex);
+  const queryIndex = url.indexOf("?");
+  let path = queryIndex === -1 ? url : url.slice(0, queryIndex);
+  const urlQuery = queryIndex === -1 ? "" : url.slice(queryIndex + 1);
 
   const entries = new URLSearchParams(
     Object.fromEntries([
@@ -168,7 +194,9 @@ const getBody = async (res: Response): Promise<unknown> => {
   const type = res.headers.get("content-type");
   const isJson = type && type.includes("application/json");
   const text = await res.clone().text();
-  return isJson ? JSON.parse(text) : text;
+  if (!isJson) return text;
+  // 204 and HEAD responses carry a JSON type but no body
+  return text ? JSON.parse(text) : null;
 };
 
 const parseResponse = async (res: Response): Promise<FchResponse> => {
@@ -211,7 +239,7 @@ function create(defaults: Options = {}): FchInstance {
     request.url = createUrl(
       url,
       { ...fch.query, ...options.query },
-      request.baseUrl ?? request.baseURL,
+      options.baseUrl ?? options.baseURL ?? fch.baseUrl ?? fch.baseURL,
     );
     request.method = (request.method || "GET").toUpperCase();
     request.headers = createHeaders({ ...fch.headers, ...options.headers });
@@ -230,6 +258,11 @@ function create(defaults: Options = {}): FchInstance {
       if (!request.headers["content-type"]) {
         request.headers["content-type"] = "application/json";
       }
+    }
+
+    // Node requires this for any streamed request body
+    if (isStreamBody(request.body) && !request.duplex) {
+      request.duplex = "half";
     }
 
     // Lazy, memoized raw fetch — shared across all output methods
@@ -256,7 +289,8 @@ function create(defaults: Options = {}): FchInstance {
         (res as unknown as Record<string, unknown>)[output] &&
         typeof (res as unknown as Record<string, unknown>)[output] === "function"
       ) {
-        return (res as unknown as Record<string, () => unknown>)[output]!() as T;
+        const clone = res.clone() as unknown as Record<string, () => unknown>;
+        return clone[output]!() as T;
       }
 
       const response = await after(await parseResponse(res));
