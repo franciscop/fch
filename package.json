@@ -1,6 +1,6 @@
 {
   "name": "fch",
-  "version": "6.0.9",
+  "version": "6.0.10",
   "description": "Fetch interface with better promises, deduplication, defaults, etc.",
   "repository": "github:franciscop/fetch",
   "author": "Francisco Presencia <public@francisco.io> (https://francisco.io/)",
