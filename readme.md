@@ -47,8 +47,8 @@ api.delete<T>(url, { headers, ...options });
 | [`headers`](#headers)     | `{}`               | Shared headers across all requests       |
 | [`output`](#output)       | `"body"`           | The return value of the API call         |
 | [`cache`](#cache)         | `undefined`        | A polystore Store for caching GET responses |
-| [`before`](#interceptors) | `req => req`       | `(req: FchRequest) => FchRequest` — transform the request before sending |
-| [`after`](#interceptors)  | `res => res`       | `(res: FchResponse) => FchResponse` — transform the response before returning |
+| [`before`](#interceptors) | `req => req`       | `(req: FchRequest) => FchRequest`: transform the request before sending |
+| [`after`](#interceptors)  | `res => res`       | `(res: FchResponse) => FchResponse`: transform the response before returning |
 | [`error`](#interceptors)  | `err => throw err` | Process errors before returning them     |
 
 ## Getting Started

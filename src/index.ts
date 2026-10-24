@@ -349,6 +349,7 @@ function create(defaults: Options = {}): FchInstance {
         .catch(error);
 
     return {
+      // oxlint-disable-next-line unicorn/no-thenable
       then(onfulfilled?: any, onrejected?: any) {
         return getDefault().then(onfulfilled, onrejected);
       },
