@@ -289,7 +289,10 @@ describe("output methods", () => {
 
   it("output methods trigger the error handler on non-OK responses", async () => {
     mockFetchOnce("not found", { status: 404 } as any);
-    const err = await fch.get("/").text().catch((e: any) => e);
+    const err = await fch
+      .get("/")
+      .text()
+      .catch((e: any) => e);
     expect(err instanceof Error).toBe(true);
     expect(err.message).toBe("Error 404");
   });

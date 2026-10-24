@@ -1,7 +1,12 @@
 import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 
 import fch from "./index.js";
-import { fetchCalls, fetchMock, mockFetchOnce, resetFetch } from "./test-utils.js";
+import {
+  fetchCalls,
+  fetchMock,
+  mockFetchOnce,
+  resetFetch,
+} from "./test-utils.js";
 
 const bytes = new Uint8Array([0x89, 0x50, 0x4e, 0x47, 0x00, 0xff]);
 

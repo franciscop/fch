@@ -1,6 +1,5 @@
 // Type definitions
-export
-type Store = {
+export type Store = {
   get: (key: string) => Promise<unknown>;
   set: (key: string, value: any, options?: any) => Promise<unknown>;
   del: (key: string) => Promise<unknown>;
@@ -9,10 +8,8 @@ type Store = {
 };
 
 type Headers = { [name: string]: string };
-export
-type Query = { [name: string]: string };
-export
-type Methods =
+export type Query = { [name: string]: string };
+export type Methods =
   | "get"
   | "head"
   | "post"
@@ -38,11 +35,9 @@ type Body =
   | SubmitEvent
   | ReadableStream;
 
-export
-type FchError = Error & { response?: Response };
+export type FchError = Error & { response?: Response };
 
-export
-type FchRequest = Omit<RequestInit, "body" | "headers" | "method"> & {
+export type FchRequest = Omit<RequestInit, "body" | "headers" | "method"> & {
   url: string;
   method: string;
   headers: Headers;
@@ -50,16 +45,14 @@ type FchRequest = Omit<RequestInit, "body" | "headers" | "method"> & {
   duplex?: "half";
 };
 
-export
-type FchResponse = {
+export type FchResponse = {
   status: number;
   statusText: string;
   headers: Headers;
   body: unknown;
 };
 
-export
-type FchResult<T = unknown> = {
+export type FchResult<T = unknown> = {
   then<R1 = T, R2 = never>(
     onfulfilled?: ((value: T) => R1 | PromiseLike<R1>) | null,
     onrejected?: ((reason: any) => R2 | PromiseLike<R2>) | null,
@@ -80,8 +73,10 @@ type FchResult<T = unknown> = {
   response(): Promise<FchResponse>;
 };
 
-export
-type Options = Omit<RequestInit, "body" | "cache" | "headers" | "method"> & {
+export type Options = Omit<
+  RequestInit,
+  "body" | "cache" | "headers" | "method"
+> & {
   url?: string;
   method?: Methods;
   query?: Query;
@@ -229,20 +224,16 @@ const parseResponse = async (res: Response): Promise<FchResponse> => {
 };
 
 function create(defaults: Options = {}): FchInstance {
-  const ongoing: Record<string, Promise<unknown>> = {};
+  const ongoing: Record<string, Promise<unknown> | undefined> = {};
 
   const fch = function <T = any>(
     url: string = "/",
     options: Options = {},
   ): FchResult<T> {
-    let {
-      output,
-      before,
-      after,
-      error,
-      cache,
-      ...request
-    } = { ...fch, ...options } as any;
+    let { output, before, after, error, cache, ...request } = {
+      ...fch,
+      ...options,
+    } as any;
 
     request.url = createUrl(
       url,
@@ -295,7 +286,8 @@ function create(defaults: Options = {}): FchInstance {
       if (
         res.ok &&
         (res as unknown as Record<string, unknown>)[output] &&
-        typeof (res as unknown as Record<string, unknown>)[output] === "function"
+        typeof (res as unknown as Record<string, unknown>)[output] ===
+          "function"
       ) {
         const clone = res.clone() as unknown as Record<string, () => unknown>;
         return clone[output]!() as T;
